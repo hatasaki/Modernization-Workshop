@@ -5,6 +5,7 @@ Azure Container Apps にデプロイします。
 ---
 
 ## リソースグループを作成
+> 💡 すでに作成済みの場合はスキップします
 
 <details>
 <summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
@@ -13,6 +14,13 @@ Azure Container Apps にデプロイします。
 az group create \
   --name $RESOURCE_GROUP \
   --location $LOCATION
+```
+
+**PowerShell の場合:**
+```powershell
+az group create `
+  --name $env:RESOURCE_GROUP `
+  --location $env:LOCATION
 ```
 
 </details>
@@ -37,10 +45,12 @@ az group create \
 
 Docker イメージを保存する場所を作ります。
 
-### 環境変数の設定
+### ACR の作成
 
-まず、ACR の名前を環境変数に設定します:
+<details>
+<summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
 
+1. ACR の名前を環境変数に設定
 ```bash
 # ACR 名 (グローバルで一意な名前が必要)
 export ACR_NAME="acr$(date +%s)"
@@ -53,11 +63,7 @@ $env:ACR_NAME = "acr$((Get-Date).Ticks)"
 
 > 💡 `$(date +%s)` や `$((Get-Date).Ticks)` で現在時刻を使い、世界中で一意な名前を自動生成しています。
 
-### ACR の作成
-
-<details>
-<summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
-
+2. ACR を作成
 ```bash
 # ACR を作成
 az acr create \
@@ -67,10 +73,28 @@ az acr create \
   --admin-enabled true
 ```
 
-### ACR にログイン
+**PowerShell の場合:**
+```powershell
+# 一意な名前を生成
+$env:ACR_NAME = "acr$((Get-Date).Ticks)"
+
+# ACR を作成
+az acr create `
+  --name $env:ACR_NAME `
+  --resource-group $env:RESOURCE_GROUP `
+  --sku Basic `
+  --admin-enabled true
+```
+
+3. ACR にログイン
 
 ```bash
 az acr login --name $ACR_NAME
+```
+
+**PowerShell の場合:**
+```powershell
+az acr login --name $env:ACR_NAME
 ```
 
 </details>
@@ -114,17 +138,24 @@ $env:ACR_NAME = "acrworkshop12345"  # あなたが入力した名前に置き換
 ### イメージにタグ付け
 
 ```bash
-# ACR のログインサーバー名を取得
-ACR_SERVER=$(az acr show --name $ACR_NAME --query loginServer -o tsv)
-
 # タグ付け (frontend アプリ)
-docker tag frontend:v1 $ACR_SERVER/frontend:v1
+docker tag frontend:v1 $ACR_NAME.azurecr.io/frontend:v1
+```
+
+**PowerShell の場合:**
+```powershell
+docker tag frontend:v1 "$env:ACR_NAME.azurecr.io/frontend:v1"
 ```
 
 ### プッシュ
 
 ```bash
-docker push $ACR_SERVER/frontend:v1
+docker push $ACR_NAME.azurecr.io/frontend:v1
+```
+
+**PowerShell の場合:**
+```powershell
+docker push "$env:ACR_NAME.azurecr.io/frontend:v1"
 ```
 
 </details>
@@ -190,11 +221,27 @@ az containerapp env create \
   --location $LOCATION
 ```
 
+**PowerShell の場合:**
+```powershell
+az containerapp env create `
+  --name $env:ACA_ENV `
+  --resource-group $env:RESOURCE_GROUP `
+  --location $env:LOCATION
+```
+
+3〜5分かかります。
+
 ### ACR の認証情報を取得
 
 ```bash
-ACR_USERNAME=$(az acr credential show --name $ACR_NAME --query username -o tsv)
-ACR_PASSWORD=$(az acr credential show --name $ACR_NAME --query passwords[0].value -o tsv)
+export ACR_USERNAME=$(az acr credential show --name $ACR_NAME --query username -o tsv)
+export ACR_PASSWORD=$(az acr credential show --name $ACR_NAME --query passwords[0].value -o tsv)
+```
+
+**PowerShell の場合:**
+```powershell
+$env:ACR_USERNAME = (az acr credential show --name $env:ACR_NAME --query username -o tsv)
+$env:ACR_PASSWORD = (az acr credential show --name $env:ACR_NAME --query "passwords[0].value" -o tsv)
 ```
 
 ### フロントエンドアプリをデプロイ
@@ -204,15 +251,33 @@ az containerapp create \
   --name frontend \
   --resource-group $RESOURCE_GROUP \
   --environment $ACA_ENV \
-  --image $ACR_SERVER/frontend:v1 \
+  --image $ACR_NAME.azurecr.io/frontend:v1 \
   --target-port 8080 \
   --ingress external \
-  --registry-server $ACR_SERVER \
+  --registry-server $ACR_NAME.azurecr.io \
   --registry-username $ACR_USERNAME \
   --registry-password $ACR_PASSWORD \
   --cpu 0.5 \
   --memory 1.0Gi \
   --min-replicas 1 \
+  --max-replicas 3
+```
+
+**PowerShell の場合:**
+```powershell
+az containerapp create `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
+  --environment $env:ACA_ENV `
+  --image "$env:ACR_NAME.azurecr.io/frontend:v1" `
+  --target-port 8080 `
+  --ingress external `
+  --registry-server "$env:ACR_NAME.azurecr.io" `
+  --registry-username $env:ACR_USERNAME `
+  --registry-password $env:ACR_PASSWORD `
+  --cpu 0.5 `
+  --memory 1.0Gi `
+  --min-replicas 1 `
   --max-replicas 3
 ```
 
@@ -282,12 +347,22 @@ $env:ACA_ENV = "managedEnvironment-xxxxx"  # あなたの環境名に置き換�
 ### URL を取得
 
 ```bash
-APP_URL=$(az containerapp show \
+export APP_URL=$(az containerapp show \
   --name frontend \
   --resource-group $RESOURCE_GROUP \
   --query properties.configuration.ingress.fqdn -o tsv)
 
 echo "アプリの URL: https://$APP_URL"
+```
+
+**PowerShell の場合:**
+```powershell
+$env:APP_URL = (az containerapp show `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
+  --query properties.configuration.ingress.fqdn -o tsv)
+
+Write-Host "アプリの URL: https://$env:APP_URL"
 ```
 
 ### ブラウザで確認
@@ -304,6 +379,14 @@ echo "アプリの URL: https://$APP_URL"
 az containerapp logs show \
   --name frontend \
   --resource-group $RESOURCE_GROUP \
+  --follow
+```
+
+**PowerShell の場合:**
+```powershell
+az containerapp logs show `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
   --follow
 ```
 

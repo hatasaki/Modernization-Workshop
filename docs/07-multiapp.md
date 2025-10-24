@@ -72,7 +72,7 @@ cd backend-api
 package com.example.backendapi;
 
 import lombok.Data;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Data
@@ -193,8 +193,14 @@ CMD ["java", "-jar", "app.jar"]
 <summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
 
 ```bash
-docker build -t $ACR_SERVER/backend-api:v1 .
-docker push $ACR_SERVER/backend-api:v1
+docker build -t $ACR_NAME.azurecr.io/backend-api:v1 .
+docker push $ACR_NAME.azurecr.io/backend-api:v1
+```
+
+**PowerShell の場合:**
+```powershell
+docker build -t "$env:ACR_NAME.azurecr.io/backend-api:v1" .
+docker push "$env:ACR_NAME.azurecr.io/backend-api:v1"
 ```
 
 </details>
@@ -204,9 +210,11 @@ docker push $ACR_SERVER/backend-api:v1
 
 ```bash
 # ローカルでビルド & プッシュ (ACR 情報は Portal からコピー)
-docker build -t <ACR_SERVER>/backend-api:v1 .
-docker push <ACR_SERVER>/backend-api:v1
+docker build -t <your-acr-name>.azurecr.io/backend-api:v1 .
+docker push <your-acr-name>.azurecr.io/backend-api:v1
 ```
+
+**注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
 
 </details>
 
@@ -215,18 +223,49 @@ docker push <ACR_SERVER>/backend-api:v1
 <details>
 <summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
 
+> 💡 **重要**: セクション 4 で設定した `ACR_USERNAME` と `ACR_PASSWORD` 環境変数が必要です。設定していない場合は以下を実行してください:
+
+```bash
+export ACR_USERNAME=$(az acr credential show --name $ACR_NAME --query username -o tsv)
+export ACR_PASSWORD=$(az acr credential show --name $ACR_NAME --query passwords[0].value -o tsv)
+```
+
+**PowerShell の場合:**
+```powershell
+$env:ACR_USERNAME = (az acr credential show --name $env:ACR_NAME --query username -o tsv)
+$env:ACR_PASSWORD = (az acr credential show --name $env:ACR_NAME --query "passwords[0].value" -o tsv)
+```
+
+**Backend API をデプロイ:**
+
 ```bash
 az containerapp create \
   --name backend-api \
   --resource-group $RESOURCE_GROUP \
   --environment $ACA_ENV \
-  --image $ACR_SERVER/backend-api:v1 \
+  --image $ACR_NAME.azurecr.io/backend-api:v1 \
   --target-port 8081 \
   --ingress internal \
-  --registry-server $ACR_SERVER \
+  --registry-server $ACR_NAME.azurecr.io \
   --registry-username $ACR_USERNAME \
   --registry-password $ACR_PASSWORD \
   --cpu 0.25 \
+  --memory 0.5Gi
+```
+
+**PowerShell の場合:**
+```powershell
+az containerapp create `
+  --name backend-api `
+  --resource-group $env:RESOURCE_GROUP `
+  --environment $env:ACA_ENV `
+  --image "$env:ACR_NAME.azurecr.io/backend-api:v1" `
+  --target-port 8081 `
+  --ingress internal `
+  --registry-server "$env:ACR_NAME.azurecr.io" `
+  --registry-username $env:ACR_USERNAME `
+  --registry-password $env:ACR_PASSWORD `
+  --cpu 0.25 `
   --memory 0.5Gi
 ```
 
@@ -389,8 +428,16 @@ public class HomeController {
 ```bash
 # frontend ディレクトリで実行
 cd ~/frontend
-docker build -t $ACR_SERVER/frontend:v2 .
-docker push $ACR_SERVER/frontend:v2
+docker build -t $ACR_NAME.azurecr.io/frontend:v4 .
+docker push $ACR_NAME.azurecr.io/frontend:v4
+```
+
+**PowerShell の場合:**
+```powershell
+# frontend ディレクトリで実行
+cd ~/frontend
+docker build -t "$env:ACR_NAME.azurecr.io/frontend:v4" .
+docker push "$env:ACR_NAME.azurecr.io/frontend:v4"
 ```
 
 </details>
@@ -401,9 +448,11 @@ docker push $ACR_SERVER/frontend:v2
 ```bash
 cd ~/frontend
 # ローカルでビルド & プッシュ
-docker build -t <ACR_SERVER>/frontend:v2 .
-docker push <ACR_SERVER>/frontend:v2
+docker build -t <your-acr-name>.azurecr.io/frontend:v4 .
+docker push <your-acr-name>.azurecr.io/frontend:v4
 ```
+
+**注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
 
 </details>
 
@@ -418,7 +467,15 @@ docker push <ACR_SERVER>/frontend:v2
 az containerapp update \
   --name frontend \
   --resource-group $RESOURCE_GROUP \
-  --image $ACR_SERVER/frontend:v2
+  --image $ACR_NAME.azurecr.io/frontend:v4
+```
+
+**PowerShell の場合:**
+```powershell
+az containerapp update `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
+  --image "$env:ACR_NAME.azurecr.io/frontend:v4"
 ```
 
 > 💡 **新規作成ではなく、既存のアプリを更新 (update) します！**
@@ -431,7 +488,7 @@ az containerapp update \
 1. [Azure Portal](https://portal.azure.com/) で既存の Container App `frontend` を開く
 2. 「リビジョン管理」→「新しいリビジョンの作成」
 3. 「コンテナー」セクションで既存のコンテナーを選択して編集
-4. **イメージ タグ** を `v2` に変更
+4. **イメージ タグ** を `v4` に変更
 5. 「作成」をクリック
 
 > 💡 **自動的に新しいバージョンにデプロイされます！ゼロダウンタイム！**
@@ -445,12 +502,22 @@ az containerapp update \
 ### Frontend の URL を取得 (既に取得済みの場合はスキップ)
 
 ```bash
-FRONTEND_URL=$(az containerapp show \
+export FRONTEND_URL=$(az containerapp show \
   --name frontend \
   --resource-group $RESOURCE_GROUP \
   --query properties.configuration.ingress.fqdn -o tsv)
 
 echo "Frontend URL: https://$FRONTEND_URL"
+```
+
+**PowerShell の場合:**
+```powershell
+$env:FRONTEND_URL = az containerapp show `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
+  --query properties.configuration.ingress.fqdn -o tsv
+
+Write-Host "Frontend URL: https://$env:FRONTEND_URL"
 ```
 
 ### ブラウザでアクセス
@@ -493,6 +560,12 @@ Backend API (内部のみ) ← セクション 7 で新規作成
 ```bash
 # リソースグループごと削除
 az group delete --name $RESOURCE_GROUP --yes
+```
+
+**PowerShell の場合:**
+```powershell
+# リソースグループごと削除
+az group delete --name $env:RESOURCE_GROUP --yes
 ```
 
 ---

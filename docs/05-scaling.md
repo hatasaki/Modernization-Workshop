@@ -38,6 +38,18 @@ az containerapp update \
   --scale-rule-http-concurrency 50
 ```
 
+**PowerShell の場合:**
+```powershell
+az containerapp update `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
+  --min-replicas 1 `
+  --max-replicas 10 `
+  --scale-rule-name http-rule `
+  --scale-rule-type http `
+  --scale-rule-http-concurrency 50
+```
+
 **これで:**
 - 最小 1 個のコンテナー
 - 最大 10 個まで増える
@@ -78,6 +90,14 @@ az containerapp update \
   --min-replicas 0
 ```
 
+**PowerShell の場合:**
+```powershell
+az containerapp update `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
+  --min-replicas 0
+```
+
 </details>
 
 <details>
@@ -107,6 +127,14 @@ az containerapp replica list \
   --output table
 ```
 
+**PowerShell の場合:**
+```powershell
+az containerapp replica list `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
+  --output table
+```
+
 ### 負荷をかけて確認 (オプション)
 
 ```bash
@@ -119,6 +147,20 @@ done
 az containerapp replica list \
   --name frontend \
   --resource-group $RESOURCE_GROUP \
+  --output table
+```
+
+**PowerShell の場合:**
+```powershell
+# 100 リクエストを送る
+1..100 | ForEach-Object {
+  Start-Job -ScriptBlock { curl "https://$env:APP_URL/" }
+}
+
+# レプリカ数を確認
+az containerapp replica list `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
   --output table
 ```
 

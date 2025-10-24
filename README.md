@@ -44,12 +44,10 @@
 ## 必要なもの
 
 - **Azure アカウント** ([無料作成](https://azure.microsoft.com/ja-jp/free/))
-- **GitHub Codespaces** (推奨) または以下がインストール済みの PC:
+- **GitHub Codespaces** または以下がインストール済みの PC:
   - Java 21
   - Docker Desktop
   - Azure CLI
-
-> 💡 **GitHub Codespaces を使えば、ブラウザだけで全て完結します!**
 
 ## ワークショップの流れ
 

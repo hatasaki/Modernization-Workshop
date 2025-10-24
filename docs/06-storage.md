@@ -11,13 +11,26 @@
 
 ```bash
 # ストレージアカウント名 (グローバルで一意)
-STORAGE_NAME="storage$(date +%s)"
+export STORAGE_NAME="storage$(date +%s)"
 
 # 作成
 az storage account create \
   --name $STORAGE_NAME \
   --resource-group $RESOURCE_GROUP \
   --location $LOCATION \
+  --sku Standard_LRS
+```
+
+**PowerShell の場合:**
+```powershell
+# ストレージアカウント名 (グローバルで一意)
+$env:STORAGE_NAME = "storage$((Get-Date).Ticks)"
+
+# 作成
+az storage account create `
+  --name $env:STORAGE_NAME `
+  --resource-group $env:RESOURCE_GROUP `
+  --location $env:LOCATION `
   --sku Standard_LRS
 ```
 
@@ -36,6 +49,18 @@ az storage account create \
    - **冗長性**: `ローカル冗長ストレージ (LRS)`
 4. 「確認および作成」→「作成」
 
+**ポータルで作成した場合の環境変数設定:**
+
+```bash
+# ポータルで入力したストレージアカウント名を設定
+export STORAGE_NAME="storage12345"  # あなたが入力した名前に置き換え
+```
+
+**PowerShell の場合:**
+```powershell
+$env:STORAGE_NAME = "storage12345"  # あなたが入力した名前に置き換え
+```
+
 </details>
 
 ---
@@ -47,7 +72,7 @@ az storage account create \
 
 ```bash
 # 接続文字列を取得
-STORAGE_KEY=$(az storage account keys list \
+export STORAGE_KEY=$(az storage account keys list \
   --account-name $STORAGE_NAME \
   --query '[0].value' -o tsv)
 
@@ -56,6 +81,20 @@ az storage share create \
   --name appdata \
   --account-name $STORAGE_NAME \
   --account-key $STORAGE_KEY
+```
+
+**PowerShell の場合:**
+```powershell
+# 接続文字列を取得
+$env:STORAGE_KEY = az storage account keys list `
+  --account-name $env:STORAGE_NAME `
+  --query '[0].value' -o tsv
+
+# ファイル共有を作成
+az storage share create `
+  --name appdata `
+  --account-name $env:STORAGE_NAME `
+  --account-key $env:STORAGE_KEY
 ```
 
 </details>
@@ -70,6 +109,25 @@ az storage share create \
    - **名前**: `appdata`
    - **クォータ**: デフォルトのまま (5120 GiB)
 5. 「作成」
+
+**ポータルで作成した場合の環境変数設定 (後で使用):**
+
+アクセスキーを環境変数に設定しておきます:
+
+1. ストレージアカウントを開く
+2. 左メニュー「アクセス キー」をクリック
+3. 「キーの表示」をクリック
+4. **key1** の「キー」をコピー
+
+```bash
+# コピーしたキーを設定
+export STORAGE_KEY="<コピーしたキー>"
+```
+
+**PowerShell の場合:**
+```powershell
+$env:STORAGE_KEY = "<コピーしたキー>"
+```
 
 </details>
 
@@ -90,6 +148,18 @@ az containerapp env storage set \
   --azure-file-account-name $STORAGE_NAME \
   --azure-file-account-key $STORAGE_KEY \
   --azure-file-share-name appdata \
+  --access-mode ReadWrite
+```
+
+**PowerShell の場合:**
+```powershell
+az containerapp env storage set `
+  --name $env:ACA_ENV `
+  --resource-group $env:RESOURCE_GROUP `
+  --storage-name mystorage `
+  --azure-file-account-name $env:STORAGE_NAME `
+  --azure-file-account-key $env:STORAGE_KEY `
+  --azure-file-share-name appdata `
   --access-mode ReadWrite
 ```
 
@@ -116,14 +186,16 @@ az containerapp env storage set \
 <details>
 <summary>📘 <b>方法 A: Azure CLI (YAML)</b></summary>
 
-`mount-config.yaml` を作成:
+> 💡 **注意**: このYAML例は参考用です。実際には、後述の「動作確認」セクションでコードを更新してから `frontend:v3` として再デプロイします。Portal方式を使う場合は、後述のPortal手順（方法B）を参照してください。
+
+参考: `mount-config.yaml` の例:
 
 ```yaml
 properties:
   template:
     containers:
-      - name: my-app
-        image: <ACR_SERVER>/my-app:v1
+      - name: frontend
+        image: <your-acr-name>.azurecr.io/frontend:v3
         volumeMounts:
           - volumeName: storage
             mountPath: /data
@@ -133,23 +205,33 @@ properties:
         storageName: mystorage
 ```
 
-**注意:** `<ACR_SERVER>` を実際の値に置き換えてください。
+**注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
 
-### 適用
+### 適用 (参考)
 
 ```bash
 az containerapp update \
-  --name my-app \
+  --name frontend \
   --resource-group $RESOURCE_GROUP \
   --yaml mount-config.yaml
 ```
+
+**PowerShell の場合:**
+```powershell
+az containerapp update `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
+  --yaml mount-config.yaml
+```
+
+> 💡 **実際の手順**: YAMLを使わず、後述の「動作確認」セクションでコードを更新して `v3` イメージとして再デプロイする方が簡単です。
 
 </details>
 
 <details>
 <summary>🌐 <b>方法 B: Azure Portal (ブラウザ)</b></summary>
 
-1. Container App (`my-app`) を開く
+1. Container App (`frontend`) を開く
 2. 「リビジョン管理」→「新しいリビジョンの作成」
 3. 「コンテナー」セクションで既存のコンテナーを選択
 4. 「ボリューム マウント」タブ:
@@ -222,16 +304,33 @@ public class HomeController {
 cd ~/frontend
 
 # イメージをビルド (v3 としてタグ付け)
-docker build -t $ACR_SERVER/frontend:v3 .
+docker build -t $ACR_NAME.azurecr.io/frontend:v3 .
 
 # ACR にプッシュ
-docker push $ACR_SERVER/frontend:v3
+docker push $ACR_NAME.azurecr.io/frontend:v3
 
 # Container App を更新
 az containerapp update \
   --name frontend \
   --resource-group $RESOURCE_GROUP \
-  --image $ACR_SERVER/frontend:v3
+  --image $ACR_NAME.azurecr.io/frontend:v3
+```
+
+**PowerShell の場合:**
+```powershell
+cd ~/frontend
+
+# イメージをビルド (v3 としてタグ付け)
+docker build -t "$env:ACR_NAME.azurecr.io/frontend:v3" .
+
+# ACR にプッシュ
+docker push "$env:ACR_NAME.azurecr.io/frontend:v3"
+
+# Container App を更新
+az containerapp update `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
+  --image "$env:ACR_NAME.azurecr.io/frontend:v3"
 ```
 
 ### 動作確認
@@ -242,6 +341,15 @@ curl https://$APP_URL/write
 
 # ファイルを読み込み
 curl https://$APP_URL/read
+```
+
+**PowerShell の場合:**
+```powershell
+# ファイルを書き込み
+curl "https://$APP_URL/write"
+
+# ファイルを読み込み
+curl "https://$APP_URL/read"
 ```
 
 "Hello from Container Apps!" と表示されれば成功!
