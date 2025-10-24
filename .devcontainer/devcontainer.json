@@ -1,0 +1,22 @@
+{
+  "name": "modernization-workshop",
+  "image": "mcr.microsoft.com/devcontainers/java:11",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vscjava.vscode-spring-boot-dashboard",
+        "pivotal.vscode-spring-boot",
+        "ms-azuretools.vscode-docker",
+        "ms-azuretools.vscode-azurecontainerapps"
+      ]
+    }
+  },
+  "postCreateCommand": "java -version && mvn -version && docker --version && az version",
+  "remoteUser": "vscode"
+}
