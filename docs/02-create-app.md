@@ -16,8 +16,8 @@
 
 - **Project**: Maven
 - **Language**: Java
-- **Spring Boot**: 2.7.18
-- **Java**: 11
+- **Spring Boot**: 3.3.5
+- **Java**: 21
 - **Artifact**: `frontend`
 - **Dependencies**: 以下を追加
   - Spring Web

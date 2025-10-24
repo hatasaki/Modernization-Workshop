@@ -22,7 +22,7 @@
 
 ### 必要なツール
 
-- Java 11: [ダウンロード](https://adoptium.net/)
+- Java 21: [ダウンロード](https://adoptium.net/)
 - Docker Desktop: [ダウンロード](https://www.docker.com/products/docker-desktop/)
 - Azure CLI: [ダウンロード](https://learn.microsoft.com/cli/azure/install-azure-cli)
 

@@ -49,8 +49,8 @@ https://start.spring.io/ で以下を設定:
 
 - **Project**: Maven
 - **Language**: Java
-- **Spring Boot**: 2.7.18
-- **Java**: 11
+- **Spring Boot**: 3.3.5
+- **Java**: 21
 - **Artifact**: `backend-api`
 - **Dependencies**: 
   - Spring Web
@@ -172,13 +172,13 @@ spring.datasource.url=jdbc:h2:mem:testdb
 ### Dockerfile
 
 ```dockerfile
-FROM maven:3.8-openjdk-11-slim AS build
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-FROM openjdk:11-jre-slim
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8081

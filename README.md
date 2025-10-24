@@ -1,7 +1,7 @@
 # Java アプリケーション モダナイゼーション ワークショップ
 ## Spring Boot アプリを Azure Container Apps へ
 
-このワークショップでは、Spring Boot アプリ (Java 11) をコンテナー化し、Azure Container Apps にデプロイする基本を学びます。
+このワークショップでは、Spring Boot アプリ (Java 21) をコンテナー化し、Azure Container Apps にデプロイする基本を学びます。
 
 ## 対象者
 
@@ -46,7 +46,7 @@
 
 - **Azure アカウント** ([無料作成](https://azure.microsoft.com/ja-jp/free/))
 - **GitHub Codespaces** (推奨) または以下がインストール済みの PC:
-  - Java 11
+  - Java 21
   - Docker Desktop
   - Azure CLI
 
@@ -108,6 +108,14 @@ A: GitHub Codespaces を使えば、ブラウザだけで OK です!
 # Azure リソースを削除
 az group delete --name rg-workshop --yes
 ```
+
+---
+
+## 既存アプリのモダナイゼーション
+
+👉 [既存アプリのコンテナー化ガイド](./docs/legacy-app-guide.md)
+
+既存のモノリシックアプリケーションを Azure Container Apps に移行する手順を解説しています。
 
 ---
 
