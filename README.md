@@ -117,3 +117,7 @@ az group delete --name rg-workshop --yes
 ## さあ、始めましょう! 🚀
 
 👉 [1. 環境準備](./docs/01-setup.md) へ進む
+
+---
+## Contributing
+This project has adopted the Microsoft Open Source Code of Conduct. For more information see the Code of Conduct FAQ or contact opencode@microsoft.com with any additional questions or comments.
