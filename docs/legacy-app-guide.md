@@ -1,13 +1,13 @@
 # 既存アプリのコンテナー化ガイド
 ## Spring Framework 5.3.24 / Java 11 アプリ向け
 
-既存の Spring Framework 5.3.24 / Java 11 のアプリケーションをコンテナー化するための実践的なガイドです。
+既存の Spring Framework 5.3.x / Java 11 のアプリケーションをコンテナー化するための実践的なガイドです。
 
 ---
 
 ## 📋 対象
 
-- Spring Framework 5.3.24 ベースのアプリケーション
+- Spring Framework 5.3.x ベースのアプリケーション
 - Spring Boot 2.7.x 系のアプリケーション
 - Java 11 で動作するアプリ
 - Maven または Gradle でビルド可能なプロジェクト
