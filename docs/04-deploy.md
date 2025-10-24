@@ -75,9 +75,6 @@ az acr create \
 
 **PowerShell の場合:**
 ```powershell
-# 一意な名前を生成
-$env:ACR_NAME = "acr$((Get-Date).Ticks)"
-
 # ACR を作成
 az acr create `
   --name $env:ACR_NAME `

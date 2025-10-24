@@ -181,73 +181,11 @@ az containerapp env storage set `
 
 </details>
 
-### アプリにマウント
-
-<details>
-<summary>📘 <b>方法 A: Azure CLI (YAML)</b></summary>
-
-> 💡 **注意**: このYAML例は参考用です。実際には、後述の「動作確認」セクションでコードを更新してから `frontend:v3` として再デプロイします。Portal方式を使う場合は、後述のPortal手順（方法B）を参照してください。
-
-参考: `mount-config.yaml` の例:
-
-```yaml
-properties:
-  template:
-    containers:
-      - name: frontend
-        image: <your-acr-name>.azurecr.io/frontend:v3
-        volumeMounts:
-          - volumeName: storage
-            mountPath: /data
-    volumes:
-      - name: storage
-        storageType: AzureFile
-        storageName: mystorage
-```
-
-**注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
-
-### 適用 (参考)
-
-```bash
-az containerapp update \
-  --name frontend \
-  --resource-group $RESOURCE_GROUP \
-  --yaml mount-config.yaml
-```
-
-**PowerShell の場合:**
-```powershell
-az containerapp update `
-  --name frontend `
-  --resource-group $env:RESOURCE_GROUP `
-  --yaml mount-config.yaml
-```
-
-> 💡 **実際の手順**: YAMLを使わず、後述の「動作確認」セクションでコードを更新して `v3` イメージとして再デプロイする方が簡単です。
-
-</details>
-
-<details>
-<summary>🌐 <b>方法 B: Azure Portal (ブラウザ)</b></summary>
-
-1. Container App (`frontend`) を開く
-2. 「リビジョン管理」→「新しいリビジョンの作成」
-3. 「コンテナー」セクションで既存のコンテナーを選択
-4. 「ボリューム マウント」タブ:
-   - 「+ 追加」をクリック
-   - **ボリュームの種類**: `Azure Files`
-   - **ストレージ名**: `mystorage` (先ほど作成したもの)
-   - **マウント パス**: `/data`
-5. 「保存」→「作成」
-
-</details>
-
 ---
 
-## 動作確認
+## ストレージマウント機能を追加してデプロイ
 
-### ファイルを書き込むエンドポイントを追加 (オプション)
+### ステップ 1: コードにストレージ機能を追加
 
 ストレージが正しくマウントされているか確認するため、ファイルの読み書き機能を追加します。
 
@@ -298,42 +236,111 @@ public class HomeController {
 }
 ```
 
-### 再ビルドとデプロイ
+### ステップ 2: イメージをビルドしてプッシュ
+
+<details>
+<summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
 
 ```bash
 cd ~/frontend
 
-# イメージをビルド (v3 としてタグ付け)
-docker build -t $ACR_NAME.azurecr.io/frontend:v3 .
+# イメージをビルド (v2 としてタグ付け)
+docker build -t $ACR_NAME.azurecr.io/frontend:v2 .
 
 # ACR にプッシュ
-docker push $ACR_NAME.azurecr.io/frontend:v3
-
-# Container App を更新
-az containerapp update \
-  --name frontend \
-  --resource-group $RESOURCE_GROUP \
-  --image $ACR_NAME.azurecr.io/frontend:v3
+docker push $ACR_NAME.azurecr.io/frontend:v2
 ```
 
 **PowerShell の場合:**
 ```powershell
 cd ~/frontend
 
-# イメージをビルド (v3 としてタグ付け)
-docker build -t "$env:ACR_NAME.azurecr.io/frontend:v3" .
+# イメージをビルド (v2 としてタグ付け)
+docker build -t "$env:ACR_NAME.azurecr.io/frontend:v2" .
 
 # ACR にプッシュ
-docker push "$env:ACR_NAME.azurecr.io/frontend:v3"
+docker push "$env:ACR_NAME.azurecr.io/frontend:v2"
+```
 
-# Container App を更新
+</details>
+
+<details>
+<summary>🌐 <b>方法 B: Azure Portal + Docker (ハイブリッド)</b></summary>
+
+```bash
+cd ~/frontend
+# ローカルでビルド & プッシュ
+docker build -t <your-acr-name>.azurecr.io/frontend:v2 .
+docker push <your-acr-name>.azurecr.io/frontend:v2
+```
+
+**注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
+
+</details>
+
+### ステップ 3: ストレージをマウントして Container App を更新
+
+<details>
+<summary>📘 <b>方法 A: Azure CLI (YAML)</b></summary>
+
+`frontend-storage.yaml` を作成:
+
+```yaml
+properties:
+  template:
+    containers:
+      - name: frontend
+        image: <your-acr-name>.azurecr.io/frontend:v2
+        volumeMounts:
+          - volumeName: storage
+            mountPath: /data
+    volumes:
+      - name: storage
+        storageType: AzureFile
+        storageName: mystorage
+```
+
+**重要:** `<your-acr-name>` を実際の ACR 名に置き換えてください。
+
+**YAMLを適用してデプロイ:**
+
+```bash
+az containerapp update \
+  --name frontend \
+  --resource-group $RESOURCE_GROUP \
+  --yaml frontend-storage.yaml
+```
+
+**PowerShell の場合:**
+```powershell
 az containerapp update `
   --name frontend `
   --resource-group $env:RESOURCE_GROUP `
-  --image "$env:ACR_NAME.azurecr.io/frontend:v3"
+  --yaml frontend-storage.yaml
 ```
 
-### 動作確認
+</details>
+
+<details>
+<summary>🌐 <b>方法 B: Azure Portal (ブラウザ)</b></summary>
+
+1. [Azure Portal](https://portal.azure.com/) で Container App `frontend` を開く
+2. 「リビジョン管理」→「新しいリビジョンの作成」
+3. 「コンテナー」セクションで既存のコンテナーを選択して編集
+4. **イメージとタグ**:
+   - **イメージ タグ** を `v2` に変更
+5. 「ボリューム マウント」タブ:
+   - 「+ 追加」をクリック
+   - **ボリュームの種類**: `Azure Files`
+   - **ストレージ名**: `mystorage` (先ほど作成したもの)
+   - **マウント パス**: `/data`
+6. 「保存」→「作成」
+
+</details>
+
+---
+
+## 動作確認
 
 ```bash
 # ファイルを書き込み

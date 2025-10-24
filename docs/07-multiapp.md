@@ -428,16 +428,16 @@ public class HomeController {
 ```bash
 # frontend ディレクトリで実行
 cd ~/frontend
-docker build -t $ACR_NAME.azurecr.io/frontend:v4 .
-docker push $ACR_NAME.azurecr.io/frontend:v4
+docker build -t $ACR_NAME.azurecr.io/frontend:v3 .
+docker push $ACR_NAME.azurecr.io/frontend:v3
 ```
 
 **PowerShell の場合:**
 ```powershell
 # frontend ディレクトリで実行
 cd ~/frontend
-docker build -t "$env:ACR_NAME.azurecr.io/frontend:v4" .
-docker push "$env:ACR_NAME.azurecr.io/frontend:v4"
+docker build -t "$env:ACR_NAME.azurecr.io/frontend:v3" .
+docker push "$env:ACR_NAME.azurecr.io/frontend:v3"
 ```
 
 </details>
@@ -448,8 +448,8 @@ docker push "$env:ACR_NAME.azurecr.io/frontend:v4"
 ```bash
 cd ~/frontend
 # ローカルでビルド & プッシュ
-docker build -t <your-acr-name>.azurecr.io/frontend:v4 .
-docker push <your-acr-name>.azurecr.io/frontend:v4
+docker build -t <your-acr-name>.azurecr.io/frontend:v3 .
+docker push <your-acr-name>.azurecr.io/frontend:v3
 ```
 
 **注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
@@ -467,7 +467,7 @@ docker push <your-acr-name>.azurecr.io/frontend:v4
 az containerapp update \
   --name frontend \
   --resource-group $RESOURCE_GROUP \
-  --image $ACR_NAME.azurecr.io/frontend:v4
+  --image $ACR_NAME.azurecr.io/frontend:v3
 ```
 
 **PowerShell の場合:**
@@ -475,7 +475,7 @@ az containerapp update \
 az containerapp update `
   --name frontend `
   --resource-group $env:RESOURCE_GROUP `
-  --image "$env:ACR_NAME.azurecr.io/frontend:v4"
+  --image "$env:ACR_NAME.azurecr.io/frontend:v3"
 ```
 
 > 💡 **新規作成ではなく、既存のアプリを更新 (update) します！**
@@ -488,7 +488,7 @@ az containerapp update `
 1. [Azure Portal](https://portal.azure.com/) で既存の Container App `frontend` を開く
 2. 「リビジョン管理」→「新しいリビジョンの作成」
 3. 「コンテナー」セクションで既存のコンテナーを選択して編集
-4. **イメージ タグ** を `v4` に変更
+4. **イメージ タグ** を `v3` に変更
 5. 「作成」をクリック
 
 > 💡 **自動的に新しいバージョンにデプロイされます！ゼロダウンタイム！**
