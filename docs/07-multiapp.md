@@ -240,8 +240,8 @@ az containerapp create \
 1. [Azure Portal](https://portal.azure.com/) で「Container Apps」を作成
 2. 基本設定:
    - **名前**: `backend-api`
-   - **リソース グループ**: `rg-workshop`
-   - **Container Apps Environment**: `aca-env`
+   - **リソース グループ**: セクション 1 で設定した名前
+   - **Container Apps Environment**: セクション 4 で確認した環境名
 
 3. コンテナー設定:
    - **イメージ**: ACR から `backend-api:v1` を選択

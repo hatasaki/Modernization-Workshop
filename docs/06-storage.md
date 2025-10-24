@@ -29,7 +29,7 @@ az storage account create \
 1. [Azure Portal](https://portal.azure.com/) で「リソースの作成」
 2. 「ストレージ アカウント」を検索して選択
 3. 基本設定:
-   - **リソース グループ**: `rg-workshop`
+   - **リソース グループ**: セクション 1 で設定した名前
    - **ストレージ アカウント名**: 一意の名前 (例: `storage12345`)
    - **リージョン**: `Japan East`
    - **パフォーマンス**: `Standard`
