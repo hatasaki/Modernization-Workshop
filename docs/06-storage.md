@@ -189,9 +189,9 @@ az containerapp env storage set `
 
 ストレージが正しくマウントされているか確認するため、ファイルの読み書き機能を追加します。
 
-**追加する場所:** `src/main/java/com/example/frontend/HomeController.java`
+**編集するファイル:** `src/main/java/com/example/frontend/HomeController.java`
 
-既存の `HomeController.java` に以下のメソッドを**追加**します:
+VS Code で `HomeController.java` を開き、既存のコードに以下のメソッドを**追加**します:
 
 ```java
 package com.example.frontend;
@@ -242,7 +242,7 @@ public class HomeController {
 <summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
 
 ```bash
-cd ~/frontend
+cd ~/workshop/frontend
 
 # イメージをビルド (v2 としてタグ付け)
 docker build -t $ACR_NAME.azurecr.io/frontend:v2 .
@@ -253,7 +253,7 @@ docker push $ACR_NAME.azurecr.io/frontend:v2
 
 **PowerShell の場合:**
 ```powershell
-cd ~/frontend
+cd ~/workshop/frontend
 
 # イメージをビルド (v2 としてタグ付け)
 docker build -t "$env:ACR_NAME.azurecr.io/frontend:v2" .
@@ -268,7 +268,7 @@ docker push "$env:ACR_NAME.azurecr.io/frontend:v2"
 <summary>🌐 <b>方法 B: Azure Portal + Docker (ハイブリッド)</b></summary>
 
 ```bash
-cd ~/frontend
+cd ~/workshop/frontend
 # ローカルでビルド & プッシュ
 docker build -t <your-acr-name>.azurecr.io/frontend:v2 .
 docker push <your-acr-name>.azurecr.io/frontend:v2
@@ -283,7 +283,7 @@ docker push <your-acr-name>.azurecr.io/frontend:v2
 <details>
 <summary>📘 <b>方法 A: Azure CLI (YAML)</b></summary>
 
-`frontend-storage.yaml` を作成:
+VS Code で `frontend-storage.yaml` を開き、以下のコードを作成します:
 
 ```yaml
 properties:

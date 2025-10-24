@@ -23,7 +23,7 @@
 
 ## Dockerfile を作成
 
-フロントエンドアプリのルートディレクトリ (`~/frontend`) に `Dockerfile` を作成:
+VS Code で `Dockerfile` を開き、フロントエンドアプリのルートディレクトリ (`~/workshop/frontend`) に以下のコードを作成します:
 
 ```dockerfile
 # ビルド用のイメージ
@@ -61,7 +61,7 @@ target/
 
 ```bash
 # frontend ディレクトリで実行
-cd ~/frontend
+cd ~/workshop/frontend
 
 # イメージをビルド
 docker build -t frontend:v1 .

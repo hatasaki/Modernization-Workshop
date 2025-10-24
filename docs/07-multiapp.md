@@ -36,8 +36,15 @@
 ### 新しいプロジェクトを作成
 
 ```bash
-cd ~
+cd ~/workshop
 mkdir backend-api
+cd backend-api
+```
+
+**PowerShell の場合:**
+```powershell
+cd ~/workshop
+New-Item -Path backend-api -ItemType Directory
 cd backend-api
 ```
 
@@ -59,14 +66,23 @@ https://start.spring.io/ で以下を設定:
 ダウンロードして展開:
 
 ```bash
-cd ~
+cd ~/workshop
 unzip ~/Downloads/backend-api.zip
 cd backend-api
 ```
 
+**PowerShell の場合:**
+```powershell
+cd ~/workshop
+Expand-Archive -Path ~/Downloads/backend-api.zip -DestinationPath .
+cd backend-api
+```
+
+> 💡 プロジェクト構造: `~/workshop/backend-api/`
+
 ### 商品エンティティを作成
 
-`src/main/java/com/example/backendapi/Product.java`:
+VS Code で `src/main/java/com/example/backendapi/Product.java` を開き、以下のコードを作成します:
 
 ```java
 package com.example.backendapi;
@@ -88,7 +104,7 @@ public class Product {
 
 ### リポジトリを作成
 
-`src/main/java/com/example/backendapi/ProductRepository.java`:
+VS Code で `src/main/java/com/example/backendapi/ProductRepository.java` を開き、以下のコードを作成します:
 
 ```java
 package com.example.backendapi;
@@ -101,7 +117,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 ### REST コントローラーを作成
 
-`src/main/java/com/example/backendapi/ProductController.java`:
+VS Code で `src/main/java/com/example/backendapi/ProductController.java` を開き、以下のコードを作成します:
 
 ```java
 package com.example.backendapi;
@@ -126,7 +142,7 @@ public class ProductController {
 
 ### サンプルデータを追加
 
-`src/main/java/com/example/backendapi/DataLoader.java`:
+VS Code で `src/main/java/com/example/backendapi/DataLoader.java` を開き、以下のコードを作成します:
 
 ```java
 package com.example.backendapi;
@@ -160,6 +176,8 @@ public class DataLoader implements CommandLineRunner {
 
 ### `application.properties`
 
+VS Code で `src/main/resources/application.properties` を開き、以下の設定を追加します:
+
 ```properties
 server.port=8081
 spring.application.name=backend-api
@@ -168,6 +186,8 @@ spring.datasource.url=jdbc:h2:mem:testdb
 ```
 
 ### Dockerfile
+
+VS Code で `Dockerfile` を開き、バックエンド API のルートディレクトリ (`~/workshop/backend-api`) に以下のコードを作成します:
 
 ```dockerfile
 FROM maven:3.9-eclipse-temurin-21-alpine AS build
@@ -303,12 +323,17 @@ az containerapp create `
 ### フロントエンドのディレクトリに移動
 
 ```bash
-cd ~/frontend
+cd ~/workshop/frontend
+```
+
+**PowerShell の場合:**
+```powershell
+cd ~/workshop/frontend
 ```
 
 ### コントローラーを更新
 
-`src/main/java/com/example/frontend/HomeController.java` を以下に変更:
+VS Code で `src/main/java/com/example/frontend/HomeController.java` を開き、以下のコードに変更します:
 
 ```java
 package com.example.frontend;
@@ -344,7 +369,7 @@ public class HomeController {
 
 ### HTML テンプレートを更新
 
-`src/main/resources/templates/index.html` を以下に変更:
+VS Code で `src/main/resources/templates/index.html` を開き、以下のコードに変更します:
 
 ```html
 <!DOCTYPE html>
@@ -427,7 +452,7 @@ public class HomeController {
 
 ```bash
 # frontend ディレクトリで実行
-cd ~/frontend
+cd ~/workshop/frontend
 docker build -t $ACR_NAME.azurecr.io/frontend:v3 .
 docker push $ACR_NAME.azurecr.io/frontend:v3
 ```
@@ -435,7 +460,7 @@ docker push $ACR_NAME.azurecr.io/frontend:v3
 **PowerShell の場合:**
 ```powershell
 # frontend ディレクトリで実行
-cd ~/frontend
+cd ~/workshop/frontend
 docker build -t "$env:ACR_NAME.azurecr.io/frontend:v3" .
 docker push "$env:ACR_NAME.azurecr.io/frontend:v3"
 ```
@@ -446,7 +471,7 @@ docker push "$env:ACR_NAME.azurecr.io/frontend:v3"
 <summary>🌐 <b>方法 B: Azure Portal + Docker</b></summary>
 
 ```bash
-cd ~/frontend
+cd ~/workshop/frontend
 # ローカルでビルド & プッシュ
 docker build -t <your-acr-name>.azurecr.io/frontend:v3 .
 docker push <your-acr-name>.azurecr.io/frontend:v3

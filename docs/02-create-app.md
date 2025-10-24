@@ -6,6 +6,27 @@
 
 ---
 
+## 作業ディレクトリの準備
+
+まず、ワークショップ用の作業ディレクトリを作成します:
+
+```bash
+mkdir -p ~/workshop
+cd ~/workshop
+```
+
+**PowerShell の場合:**
+```powershell
+New-Item -Path ~/workshop -ItemType Directory -Force
+cd ~/workshop
+```
+
+> 💡 以降の作業は、すべて `~/workshop` ディレクトリ内で行います。
+> 
+> **既に `workshop` フォルダが存在する場合**: `~/aca-workshop` や `~/container-apps-workshop` など、別の名前を使用してください。その場合、以降のコマンドのパスもそれに合わせて読み替えてください（例: `cd ~/aca-workshop/frontend`）。
+
+---
+
 ## Spring Initializr でプロジェクト作成
 
 ブラウザで https://start.spring.io/ を開きます。
@@ -26,10 +47,21 @@
 ### 展開
 
 ```bash
-cd ~
+# workshop ディレクトリ内に展開
+cd ~/workshop
 unzip ~/Downloads/frontend.zip
 cd frontend
 ```
+
+**PowerShell の場合:**
+```powershell
+# workshop ディレクトリ内に展開
+cd ~/workshop
+Expand-Archive -Path ~/Downloads/frontend.zip -DestinationPath .
+cd frontend
+```
+
+> 💡 プロジェクト構造: `~/workshop/frontend/`
 
 ---
 
@@ -37,7 +69,13 @@ cd frontend
 
 ### コントローラーを作成
 
-`src/main/java/com/example/frontend/HomeController.java` を作成:
+---
+
+### コントローラーを作成
+
+VS Code で `src/main/java/com/example/frontend/HomeController.java` を開き、以下のコードを作成します:
+
+```java
 
 ```java
 package com.example.frontend;
@@ -61,7 +99,7 @@ public class HomeController {
 
 ## HTML テンプレートを作成
 
-`src/main/resources/templates/index.html` を作成:
+VS Code で `src/main/resources/templates/index.html` を開き、以下のコードを作成します:
 
 ```html
 <!DOCTYPE html>
@@ -101,7 +139,7 @@ public class HomeController {
 
 ## 設定ファイル
 
-`src/main/resources/application.properties`:
+VS Code で `src/main/resources/application.properties` を開き、以下の設定を追加します:
 
 ```properties
 server.port=8080
