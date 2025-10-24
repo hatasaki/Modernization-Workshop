@@ -18,11 +18,27 @@
 
 ### 必要なツール
 
-- Java 21: [ダウンロード](https://adoptium.net/)
-- Docker Desktop: [ダウンロード](https://www.docker.com/products/docker-desktop/)
-- Azure CLI: [ダウンロード](https://learn.microsoft.com/cli/azure/install-azure-cli)
+- **Visual Studio Code**: [ダウンロード](https://code.visualstudio.com/)
+- **Java 21**: [ダウンロード](https://adoptium.net/)
+- **Docker Desktop**: [ダウンロード](https://www.docker.com/products/docker-desktop/)
+- **Azure CLI**: [ダウンロード](https://learn.microsoft.com/cli/azure/install-azure-cli)
+
+### VS Code の準備
+
+VS Code を開いて、統合ターミナルを使えるようにします:
+
+1. VS Code を起動
+2. メニューから **ターミナル** → **新しいターミナル** を選択 (または `` Ctrl+` ``)
+3. ターミナルが下部に表示されます
+
+**推奨拡張機能** (オプション):
+- Extension Pack for Java
+- Docker
+- Azure Tools
 
 ### 確認
+
+VS Code のターミナルで以下のコマンドを実行して、すべてのツールが正しくインストールされているか確認します:
 
 ```bash
 # Java のバージョン確認
@@ -83,7 +99,7 @@ az account set --subscription "あなたのサブスクリプション名"
 
 ## 環境変数の設定
 
-後で使う基本情報を設定しておきます:
+VS Code のターミナルで、後で使う基本情報を設定しておきます:
 
 ```bash
 # リソースグループ名 (好きな名前に変更してください)
