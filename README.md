@@ -54,17 +54,15 @@
 
 ## ワークショップの流れ
 
-| # | 内容 | 時間 |
-|---|------|------|
-| 1 | [環境準備](./docs/01-setup.md) | 10分 |
-| 2 | [アプリ作成](./docs/02-create-app.md) | 15分 |
-| 3 | [コンテナー化](./docs/03-containerize.md) | 15分 |
-| 4 | [Azure へデプロイ](./docs/04-deploy.md) | 20分 |
-| 5 | [スケーリング](./docs/05-scaling.md) | 10分 |
-| 6 | [ストレージ追加](./docs/06-storage.md) | 10分 |
-| 7 | [複数アプリ連携](./docs/07-multiapp.md) | 15分 |
-
-**合計**: 約 1.5 時間
+| # | 内容 |
+|---|------|
+| 1 | [環境準備](./docs/01-setup.md) |
+| 2 | [アプリ作成](./docs/02-create-app.md) |
+| 3 | [コンテナー化](./docs/03-containerize.md) |
+| 4 | [Azure へデプロイ](./docs/04-deploy.md) |
+| 5 | [スケーリング](./docs/05-scaling.md) |
+| 6 | [ストレージ追加](./docs/06-storage.md) |
+| 7 | [複数アプリ連携](./docs/07-multiapp.md) |
 
 ## 何を作るか
 
