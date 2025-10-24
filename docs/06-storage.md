@@ -98,7 +98,7 @@ az containerapp env storage set \
 <details>
 <summary>🌐 <b>方法 B: Azure Portal (ブラウザ)</b></summary>
 
-1. Container Apps Environment (`aca-env`) を開く
+1. セクション 4 で作成した Container Apps Environment を開く
 2. 左メニュー「Azure Files」をクリック
 3. 「+ 追加」をクリック
 4. 以下を入力:

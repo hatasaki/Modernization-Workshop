@@ -159,10 +159,36 @@ docker push <ログインサーバー>/frontend:v1
 
 ## Container App をデプロイ（Environment も同時に作成）
 
-> 💡 **Container App を初めて作成する際、Container Apps Environment も自動的に作成されます。**
-
 <details>
 <summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
+
+### 環境変数の設定
+
+Container Apps Environment の名前を環境変数に設定します。
+
+> 💡 **重要**: 環境名は、同じリージョン内で一意である必要があります。複数人で同時にワークショップを実施する場合は、名前が重複しないように工夫してください。
+
+```bash
+# Container Apps 環境名（あなたの名前や番号を含めて一意にする）
+export ACA_ENV="managedenv-<yourname>"
+```
+
+**PowerShell の場合:**
+```powershell
+# Container Apps 環境名（あなたの名前や番号を含めて一意にする）
+$env:ACA_ENV = "managedenv-<yourname>"
+```
+
+> 💡 `<yourname>` を、あなたの名前やニックネーム、番号などに置き換えてください。例: `managedenv-tanaka`
+
+### Container Apps Environment を作成
+
+```bash
+az containerapp env create \
+  --name $ACA_ENV \
+  --resource-group $RESOURCE_GROUP \
+  --location $LOCATION
+```
 
 ### ACR の認証情報を取得
 
@@ -171,26 +197,13 @@ ACR_USERNAME=$(az acr credential show --name $ACR_NAME --query username -o tsv)
 ACR_PASSWORD=$(az acr credential show --name $ACR_NAME --query passwords[0].value -o tsv)
 ```
 
-### Container Apps Environment と Frontend アプリを作成
-
-まず Environment を作成します:
-
-```bash
-az containerapp env create \
-  --name managedenv-workshop \
-  --resource-group $RESOURCE_GROUP \
-  --location $LOCATION
-```
-
-3〜5分かかります。
-
-次にフロントエンドアプリをデプロイします:
+### フロントエンドアプリをデプロイ
 
 ```bash
 az containerapp create \
   --name frontend \
   --resource-group $RESOURCE_GROUP \
-  --environment managedenv-workshop \
+  --environment $ACA_ENV \
   --image $ACR_SERVER/frontend:v1 \
   --target-port 8080 \
   --ingress external \
@@ -208,6 +221,8 @@ az containerapp create \
 <details>
 <summary>🌐 <b>方法 B: Azure Portal (ブラウザ)</b></summary>
 
+### Container App を作成（Environment も自動作成される）
+
 1. [Azure Portal](https://portal.azure.com/) で「リソースの作成」
 2. 「Container Apps」を検索して選択
 3. 「作成」をクリック
@@ -217,9 +232,8 @@ az containerapp create \
    - **リージョン**: `Japan East`
 5. **Container Apps Environment**:
    - 「新規作成」を選択
-   - **環境名**: デフォルトの名前をそのまま使用（例: `managedEnvironment-xxxxx`）
-   - または任意の名前（例: `managedenv-workshop`）を入力
-   - **作成** をクリック
+   - **環境名**: Azure が自動生成する名前をそのまま使用（例: `managedEnvironment-xxxxx`）
+   - 「作成」をクリック
 
 6. 「コンテナー」タブ:
    - **イメージのソース**: `Azure Container Registry`
@@ -228,57 +242,26 @@ az containerapp create \
    - **イメージ タグ**: `v1`
    - ✅ 「管理者の資格情報を使用する」にチェック
 
-5. 「イングレス」タブ:
+7. 「イングレス」タブ:
    - ✅ 「イングレスを有効にする」にチェック
    - **イングレス トラフィック**: `任意の場所からのトラフィックを受け入れる`
    - **ターゲット ポート**: `8080`
 
-6. 「スケール」タブ:
+8. 「スケール」タブ:
    - **最小レプリカ数**: `1`
    - **最大レプリカ数**: `3`
 
-7. 「確認および作成」→「作成」
+9. 「確認および作成」→「作成」
 
-</details>
+### 作成された Environment 名を環境変数に設定
 
----
+Container App の作成が完了したら、自動生成された Environment 名を確認して環境変数に設定します。
 
-## 作成された Environment 名を確認
+1. Azure Portal でセクション 1 で作成したリソースグループを開く
+2. 種類が「Container Apps Environment」のリソースを探す
+3. その名前（例: `managedEnvironment-xxxxx`）をメモ
 
-後のセクションで使用するため、Environment 名を確認して環境変数に設定します。
-
-### 方法 A: Azure CLI で確認
-
-```bash
-# Environment 名を取得
-ACA_ENV=$(az containerapp env list \
-  --resource-group $RESOURCE_GROUP \
-  --query "[0].name" -o tsv)
-
-echo "Container Apps Environment: $ACA_ENV"
-
-# 環境変数に設定（後のセクションで使用）
-export ACA_ENV
-```
-
-**PowerShell の場合:**
-```powershell
-# Environment 名を取得
-$env:ACA_ENV = (az containerapp env list `
-  --resource-group $env:RESOURCE_GROUP `
-  --query "[0].name" -o tsv)
-
-Write-Host "Container Apps Environment: $env:ACA_ENV"
-```
-
-### 方法 B: Azure Portal で確認
-
-1. [Azure Portal](https://portal.azure.com/) を開く
-2. セクション 1 で作成したリソースグループを開く
-3. 種類が「Container Apps Environment」のリソースを探す
-4. その名前（例: `managedEnvironment-xxxxx` または `managedenv-workshop`）をメモ
-
-**確認した名前を環境変数に設定:**
+**環境変数に設定:**
 
 ```bash
 # 確認した環境名を設定
@@ -289,6 +272,8 @@ export ACA_ENV="managedEnvironment-xxxxx"  # あなたの環境名に置き換�
 ```powershell
 $env:ACA_ENV = "managedEnvironment-xxxxx"  # あなたの環境名に置き換え
 ```
+
+</details>
 
 ---
 

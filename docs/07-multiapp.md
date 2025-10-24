@@ -241,7 +241,7 @@ az containerapp create \
 2. 基本設定:
    - **名前**: `backend-api`
    - **リソース グループ**: セクション 1 で設定した名前
-   - **Container Apps Environment**: セクション 4 で確認した環境名
+   - **Container Apps Environment**: セクション 4 で作成した環境を選択
 
 3. コンテナー設定:
    - **イメージ**: ACR から `backend-api:v1` を選択
