@@ -4,9 +4,7 @@
 
 ---
 
-## オプション A: GitHub Codespaces を使う (推奨)
-
-**一番簡単な方法です!**
+## オプション A: GitHub Codespaces を使う
 
 1. このリポジトリで「Code」→「Codespaces」→「Create codespace」をクリック
 2. 3分ほど待つと準備完了
@@ -85,29 +83,26 @@ az account set --subscription "あなたのサブスクリプション名"
 
 ## 環境変数の設定
 
-後で使う名前を設定しておきます:
+後で使う基本情報を設定しておきます:
 
 ```bash
-# リソースグループ名
-export RESOURCE_GROUP="rg-workshop"
+# リソースグループ名 (好きな名前に変更してください)
+export RESOURCE_GROUP="<your-resource-group-name>"
 
 # リージョン
 export LOCATION="japaneast"
-
-# ACR 名 (グローバルで一意な名前が必要)
-export ACR_NAME="acr$(date +%s)"
-
-# Container Apps 環境名
-export ACA_ENV="aca-env"
 ```
 
 **PowerShell の場合:**
 ```powershell
-$env:RESOURCE_GROUP = "rg-workshop"
+# リソースグループ名 (好きな名前に変更してください)
+$env:RESOURCE_GROUP = "<your-resource-group-name>"
+
+# リージョン
 $env:LOCATION = "japaneast"
-$env:ACR_NAME = "acr$((Get-Date).Ticks)"
-$env:ACA_ENV = "aca-env"
 ```
+
+> 💡 `<your-resource-group-name>` は、例えば `rg-workshop-yourname` のように、あなた専用の名前に置き換えてください。
 
 ---
 

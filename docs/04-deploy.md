@@ -37,6 +37,24 @@ az group create \
 
 Docker イメージを保存する場所を作ります。
 
+### 環境変数の設定
+
+まず、ACR の名前を環境変数に設定します:
+
+```bash
+# ACR 名 (グローバルで一意な名前が必要)
+export ACR_NAME="acr$(date +%s)"
+```
+
+**PowerShell の場合:**
+```powershell
+$env:ACR_NAME = "acr$((Get-Date).Ticks)"
+```
+
+> 💡 `$(date +%s)` や `$((Get-Date).Ticks)` で現在時刻を使い、世界中で一意な名前を自動生成しています。
+
+### ACR の作成
+
 <details>
 <summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
 
@@ -48,8 +66,6 @@ az acr create \
   --sku Basic \
   --admin-enabled true
 ```
-
-2分ほどかかります。
 
 ### ACR にログイン
 
@@ -66,13 +82,25 @@ az acr login --name $ACR_NAME
 2. 「コンテナー レジストリ」を検索して選択
 3. 「作成」をクリック
 4. 以下を入力:
-   - **リソース グループ**: `rg-workshop`
+   - **リソース グループ**: セクション 1 で設定した名前
    - **レジストリ名**: 一意の名前 (例: `acrworkshop12345`)
    - **場所**: `Japan East`
    - **SKU**: `Basic`
 5. 「確認および作成」→「作成」
 6. 作成後、ACR を開く
 7. 左メニュー「アクセス キー」→「管理者ユーザー」を有効化
+
+**ポータルで作成した場合の環境変数設定:**
+
+```bash
+# ポータルで入力したレジストリ名を設定
+export ACR_NAME="acrworkshop12345"  # あなたが入力した名前に置き換え
+```
+
+**PowerShell の場合:**
+```powershell
+$env:ACR_NAME = "acrworkshop12345"  # あなたが入力した名前に置き換え
+```
 
 </details>
 
@@ -131,6 +159,22 @@ docker push <ログインサーバー>/frontend:v1
 
 ## Container Apps Environment を作成
 
+### 環境変数の設定
+
+Container Apps の環境名を設定します:
+
+```bash
+# Container Apps 環境名
+export ACA_ENV="aca-env"
+```
+
+**PowerShell の場合:**
+```powershell
+$env:ACA_ENV = "aca-env"
+```
+
+### Environment の作成
+
 <details>
 <summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
 
@@ -156,6 +200,18 @@ az containerapp env create \
    - **環境名**: `aca-env`
    - **リージョン**: `Japan East`
 6. そのまま次に進む (アプリは次のステップで作成)
+
+**ポータルで作成した場合の環境変数設定:**
+
+```bash
+# ポータルで入力した環境名を設定
+export ACA_ENV="aca-env"
+```
+
+**PowerShell の場合:**
+```powershell
+$env:ACA_ENV = "aca-env"
+```
 
 </details>
 
@@ -200,7 +256,7 @@ az containerapp create \
 1. [Azure Portal](https://portal.azure.com/) で「リソースの作成」
 2. 「Container Apps」を検索して選択
 3. 基本設定:
-   - **リソース グループ**: `rg-workshop`
+   - **リソース グループ**: セクション 1 で設定した名前
    - **コンテナー アプリ名**: `frontend`
    - **リージョン**: `Japan East`
    - **Container Apps Environment**: 先ほど作成した `aca-env` を選択
