@@ -249,10 +249,13 @@ Invoke-WebRequest http://localhost:8081/api/products
 
 > 💡 **まずはローカルでバックエンドAPIが正しく動作することを確認しました！**
 
+---
+
+## ACR にプッシュ
+
 ### イメージにタグ付け
 
 ```bash
-# タグ付け (frontend アプリ)
 docker tag backend-api:v1 $ACR_NAME.azurecr.io/backend-api:v1
 ```
 
@@ -271,6 +274,9 @@ docker push $ACR_NAME.azurecr.io/backend-api:v1
 ```powershell
 docker push "$env:ACR_NAME.azurecr.io/backend-api:v1"
 ```
+
+> 💡 認証エラーが出る場合はもう一度 docker login を実施してください（セクション４参照）
+
 ---
 
 <details>
@@ -372,7 +378,7 @@ cd ~/workshop/frontend
 
 ### コントローラーを更新
 
-VS Code で `src/main/java/com/example/frontend/HomeController.java` を開き、以下のコードに変更します:
+VS Code で `src/main/java/com/example/frontend/HomeController.java` を開き (`code src/main/java/com/example/frontend/HomeController.java`)、以下のコードに上書き（リプレース - 既存のコードはすべて削除して入れ替え）します:
 
 ```java
 package com.example.frontend;
@@ -411,7 +417,7 @@ public class HomeController {
 
 ### HTML テンプレートを更新
 
-VS Code で `src/main/resources/templates/index.html` を開き、以下のコードに変更します:
+VS Code で `src/main/resources/templates/index.html` を開き (`code src/main/resources/templates/index.html`)、以下のコードに上書き（リプレース - 既存のコードはすべて削除して入れ替え）します:
 
 ```html
 <!DOCTYPE html>
@@ -492,13 +498,6 @@ VS Code で `src/main/resources/templates/index.html` を開き、以下のコ�
 ### Frontend のコンテナーイメージをビルド
 
 ```bash
-cd ~/workshop/frontend
-docker build -t frontend:v2 .
-```
-
-**PowerShell の場合:**
-```powershell
-cd ~/workshop/frontend
 docker build -t frontend:v2 .
 ```
 
@@ -507,11 +506,6 @@ docker build -t frontend:v2 .
 両方のコンテナーが通信できるように、専用のネットワークを作成します:
 
 ```bash
-docker network create workshop-network
-```
-
-**PowerShell の場合:**
-```powershell
 docker network create workshop-network
 ```
 
@@ -525,23 +519,11 @@ docker rm backend-api
 docker run -d --name backend-api --network workshop-network -p 8081:8081 backend-api:v1
 ```
 
-**PowerShell の場合:**
-```powershell
-docker stop backend-api
-docker rm backend-api
-docker run -d --name backend-api --network workshop-network -p 8081:8081 backend-api:v1
-```
-
 ### Frontend コンテナーを起動
 
 環境変数 `BACKEND_HOST` を設定して、Backend API のコンテナー名を指定します:
 
 ```bash
-docker run -d --name frontend --network workshop-network -p 8080:8080 -e BACKEND_HOST=backend-api frontend:v2
-```
-
-**PowerShell の場合:**
-```powershell
 docker run -d --name frontend --network workshop-network -p 8080:8080 -e BACKEND_HOST=backend-api frontend:v2
 ```
 
@@ -571,170 +553,26 @@ docker rm frontend backend-api
 docker network rm workshop-network
 ```
 
-**PowerShell の場合:**
-```powershell
-docker stop frontend backend-api
-docker rm frontend backend-api
-docker network rm workshop-network
-```
-
 ---
 
-## Azure Container Apps にデプロイ
+## 更新したフロントエンドを Azure Container Apps にデプロイ
 
-ローカルで動作確認ができたので、Azure Container Apps にデプロイします。
-
-### Backend API をデプロイ
-
-#### ACRにプッシュ
-
-<details>
-<summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
-
-```bash
-cd ~/workshop/backend-api
-docker build -t $ACR_NAME.azurecr.io/backend-api:v1 .
-docker push $ACR_NAME.azurecr.io/backend-api:v1
-```
-
-**PowerShell の場合:**
-```powershell
-cd ~/workshop/backend-api
-docker build -t "$env:ACR_NAME.azurecr.io/backend-api:v1" .
-docker push "$env:ACR_NAME.azurecr.io/backend-api:v1"
-```
-
-</details>
-
-<details>
-<summary>🌐 <b>方法 B: Azure Portal + Docker</b></summary>
-
-```bash
-cd ~/workshop/backend-api
-# ローカルでビルド & プッシュ (ACR 情報は Portal からコピー)
-docker build -t <your-acr-name>.azurecr.io/backend-api:v1 .
-docker push <your-acr-name>.azurecr.io/backend-api:v1
-```
-
-**注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
-
-</details>
-
-#### ACAにデプロイ (内部アクセスのみ)
-
-<details>
-<summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
-
-> 💡 **重要**: セクション 4 で設定した `ACR_USERNAME` と `ACR_PASSWORD` 環境変数が必要です。設定していない場合は以下を実行してください:
-
-```bash
-export ACR_USERNAME=$(az acr credential show --name $ACR_NAME --query username -o tsv)
-export ACR_PASSWORD=$(az acr credential show --name $ACR_NAME --query passwords[0].value -o tsv)
-```
-
-**PowerShell の場合:**
-```powershell
-$env:ACR_USERNAME = (az acr credential show --name $env:ACR_NAME --query username -o tsv)
-$env:ACR_PASSWORD = (az acr credential show --name $env:ACR_NAME --query "passwords[0].value" -o tsv)
-```
-
-**Backend API をデプロイ:**
-
-```bash
-az containerapp create \
-  --name backend-api \
-  --resource-group $RESOURCE_GROUP \
-  --environment $ACA_ENV \
-  --image $ACR_NAME.azurecr.io/backend-api:v1 \
-  --target-port 8081 \
-  --ingress internal \
-  --registry-server $ACR_NAME.azurecr.io \
-  --registry-username $ACR_USERNAME \
-  --registry-password $ACR_PASSWORD \
-  --cpu 0.25 \
-  --memory 0.5Gi
-```
-
-**PowerShell の場合:**
-```powershell
-az containerapp create `
-  --name backend-api `
-  --resource-group $env:RESOURCE_GROUP `
-  --environment $env:ACA_ENV `
-  --image "$env:ACR_NAME.azurecr.io/backend-api:v1" `
-  --target-port 8081 `
-  --ingress internal `
-  --registry-server "$env:ACR_NAME.azurecr.io" `
-  --registry-username $env:ACR_USERNAME `
-  --registry-password $env:ACR_PASSWORD `
-  --cpu 0.25 `
-  --memory 0.5Gi
-```
-
-**重要:** `--ingress internal` で内部のみアクセス可能にしています。
-
-</details>
-
-<details>
-<summary>🌐 <b>方法 B: Azure Portal (ブラウザ)</b></summary>
-
-1. [Azure Portal](https://portal.azure.com/) で「Container Apps」を作成
-2. 基本設定:
-   - **名前**: `backend-api`
-   - **リソース グループ**: セクション 1 で設定した名前
-   - **Container Apps Environment**: セクション 4 で作成した環境を選択
-
-3. コンテナー設定:
-   - **イメージ**: ACR から `backend-api:v1` を選択
-
-4. **イングレス設定 (重要)**:
-   - ✅ 「イングレスを有効にする」
-   - **イングレス トラフィック**: `Container Apps Environment 内に限定` ← **内部のみ**
-   - **ターゲット ポート**: `8081`
-
-5. 「確認および作成」→「作成」
-
-</details>
+ローカルで動作確認ができたので、Azure Container Apps でマルチコンテナー通信を実施します。
 
 ---
 
 ### Frontend をデプロイ
 
-#### ACRにプッシュ
-
-<details>
-<summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
+#### 更新したコンテナーをACRにプッシュ
 
 ```bash
-# frontend ディレクトリで実行
-cd ~/workshop/frontend
-docker build -t $ACR_NAME.azurecr.io/frontend:v2 .
 docker push $ACR_NAME.azurecr.io/frontend:v2
 ```
 
 **PowerShell の場合:**
 ```powershell
-# frontend ディレクトリで実行
-cd ~/workshop/frontend
-docker build -t "$env:ACR_NAME.azurecr.io/frontend:v2" .
 docker push "$env:ACR_NAME.azurecr.io/frontend:v2"
 ```
-
-</details>
-
-<details>
-<summary>🌐 <b>方法 B: Azure Portal + Docker</b></summary>
-
-```bash
-cd ~/workshop/frontend
-# ローカルでビルド & プッシュ
-docker build -t <your-acr-name>.azurecr.io/frontend:v2 .
-docker push <your-acr-name>.azurecr.io/frontend:v2
-```
-
-**注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
-
-</details>
 
 #### ACAにデプロイ
 
@@ -782,6 +620,7 @@ az containerapp update `
 ## 動作確認
 
 ### Frontend の URL を取得 (既に取得済みの場合はスキップ)
+Azure ポータルの Azure Container Apps の概要ページ右にアプリの URL リンクが表示されますので、クリックして接続できます。
 
 ```bash
 export FRONTEND_URL=$(az containerapp show \
