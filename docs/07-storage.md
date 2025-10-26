@@ -240,12 +240,7 @@ public class HomeController {
 
 ### ステップ 2: イメージをビルドしてプッシュ
 
-<details>
-<summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
-
 ```bash
-cd ~/workshop/frontend
-
 # イメージをビルド (v3 としてタグ付け)
 docker build -t $ACR_NAME.azurecr.io/frontend:v3 .
 
@@ -255,30 +250,12 @@ docker push $ACR_NAME.azurecr.io/frontend:v3
 
 **PowerShell の場合:**
 ```powershell
-cd ~/workshop/frontend
-
 # イメージをビルド (v3 としてタグ付け)
 docker build -t "$env:ACR_NAME.azurecr.io/frontend:v3" .
 
 # ACR にプッシュ
 docker push "$env:ACR_NAME.azurecr.io/frontend:v3"
 ```
-
-</details>
-
-<details>
-<summary>🌐 <b>方法 B: Azure Portal + Docker (ハイブリッド)</b></summary>
-
-```bash
-cd ~/workshop/frontend
-# ローカルでビルド & プッシュ
-docker build -t <your-acr-name>.azurecr.io/frontend:v3 .
-docker push <your-acr-name>.azurecr.io/frontend:v3
-```
-
-**注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
-
-</details>
 
 ### ステップ 3: ストレージをマウントして Container App を更新
 
