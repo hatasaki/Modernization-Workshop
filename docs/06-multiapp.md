@@ -63,6 +63,8 @@ https://start.spring.io/ で以下を設定:
   - H2 Database
   - Lombok
 
+![Spring Initializr](../images/Spring-backendapi.png)
+
 ダウンロードした`backend-api.zip`ファイルを`~/workshop`にコピーして展開:
 
 ```bash
@@ -80,10 +82,10 @@ cd backend-api
 
 ### 商品エンティティを作成
 
-VS Code で `src/main/java/com/example/backendapi/Product.java` を開き、以下のコードを作成します:
+VS Code で `src/main/java/com/example/backend_api/Product.java` のファイルを新規作成します（VS Code のターミナルで `code src/main/java/com/example/backend_api/Product.java`を実行）</BR>コードは下記です:
 
 ```java
-package com.example.backendapi;
+package com.example.backend_api;
 
 import lombok.Data;
 import jakarta.persistence.*;
@@ -102,10 +104,11 @@ public class Product {
 
 ### リポジトリを作成
 
-VS Code で `src/main/java/com/example/backendapi/ProductRepository.java` を開き、以下のコードを作成します:
+VS Code で `src/main/java/com/example/backend_api/ProductRepository.java` のファイルを新規作成します（VS Code のターミナルで `code src/main/java/com/example/backend_api/ProductRepository.java`を実行）</BR>コードは下記です:
+
 
 ```java
-package com.example.backendapi;
+package com.example.backend_api;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -115,10 +118,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 ### REST コントローラーを作成
 
-VS Code で `src/main/java/com/example/backendapi/ProductController.java` を開き、以下のコードを作成します:
+VS Code で `src/main/java/com/example/backend_api/ProductController.java` のファイルを新規作成します（VS Code のターミナルで `code src/main/java/com/example/backend_api/ProductController.java`を実行）</BR>コードは下記です:
 
 ```java
-package com.example.backendapi;
+package com.example.backend_api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -140,10 +143,10 @@ public class ProductController {
 
 ### サンプルデータを追加
 
-VS Code で `src/main/java/com/example/backendapi/DataLoader.java` を開き、以下のコードを作成します:
+VS Code で `src/main/java/com/example/backend_api/DataLoader.java` のファイルを新規作成します（VS Code のターミナルで `code src/main/java/com/example/backend_api/DataLoader.java`を実行）</BR>コードは下記です:
 
 ```java
-package com.example.backendapi;
+package com.example.backend_api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
