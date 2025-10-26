@@ -35,29 +35,29 @@ cd ~/workshop
 
 - **Project**: Maven
 - **Language**: Java
-- **Spring Boot**: 3.3.5
+- **Spring Boot**: 3.5.7
 - **Java**: 21
 - **Artifact**: `frontend`
 - **Dependencies**: 以下を追加
   - Spring Web
   - Thymeleaf
 
-「GENERATE」をクリックして、`frontend.zip` をダウンロード。
+「GENERATE」をクリックして、`frontend.zip` をダウンロードして作業フォルダ(workshop)に保存
+
+![Spring Initializr](../images/SpringInitializr.png)
 
 ### 展開
 
 ```bash
 # workshop ディレクトリ内に展開
-cd ~/workshop
-unzip ~/Downloads/frontend.zip
+unzip frontend.zip
 cd frontend
 ```
 
 **PowerShell の場合:**
 ```powershell
 # workshop ディレクトリ内に展開
-cd ~/workshop
-Expand-Archive -Path ~/Downloads/frontend.zip -DestinationPath .
+Expand-Archive -Path frontend.zip -DestinationPath .
 cd frontend
 ```
 
@@ -66,16 +66,13 @@ cd frontend
 ---
 
 ## フロントエンドページを作成
-
-### コントローラーを作成
-
 ---
 
 ### コントローラーを作成
 
-VS Code で `src/main/java/com/example/frontend/HomeController.java` を開き、以下のコードを作成します:
+VS Code で `src/main/java/com/example/frontend/HomeController.java` ファイルを以下のコードで新たに作成します:
 
-```java
+> 💡 VS Code のターミナルでコマンド `code <ファイル>` を実行して簡単にオープンできます。</BR>例: `code src/main/java/com/example/frontend/HomeController.java`
 
 ```java
 package com.example.frontend;
@@ -99,7 +96,7 @@ public class HomeController {
 
 ## HTML テンプレートを作成
 
-VS Code で `src/main/resources/templates/index.html` を開き、以下のコードを作成します:
+VS Code で `src/main/resources/templates/index.html` ファイルを以下のコードを利用して新たに作成します:
 
 ```html
 <!DOCTYPE html>
@@ -152,7 +149,10 @@ server.port=8080
 ```bash
 # ビルドして起動
 ./mvnw spring-boot:run
+```
+> `./mvnw: Permission denied` と表示された場合は `chmod a+x ./mvnw` を実行してください
 
+```bash
 # Windows の場合
 mvnw.cmd spring-boot:run
 ```

@@ -45,7 +45,7 @@ CMD ["java", "-jar", "app.jar"]
 
 ---
 
-## .dockerignore を作成
+## [Option] .dockerignore を作成
 
 不要なファイルを除外:
 
@@ -60,14 +60,21 @@ target/
 ## Docker イメージをビルド
 
 ```bash
-# frontend ディレクトリで実行
-cd ~/workshop/frontend
-
-# イメージをビルド
+# コンテナーイメージをビルド
 docker build -t frontend:v1 .
 ```
+Dockerfile の内容に基づきビルドされる様子が表示されます。</BR>
+完了後に下記のコマンドを実行すると、ローカルに保存されたコンテナーイメージの一覧の中に frontend:v1 が確認できます
+```bash
+# ローカルのコンテナーイメージ一覧表示
+docker images
+```
 
-2〜3分かかります。完了するまで待ちましょう。
+> 後のセクションで作成する Azure Container Registry (ACR) を利用してコンテナーをビルドしてそのまま作成されたコンテナーイメージをACRに保存することもできます。作成コマンドは下記です。
+```bash
+# Azure Container Registry でイメージをビルドしてそのまま保存
+az acr build --registry <ACR の名前> --image frontend:v1 .
+```
 
 ---
 

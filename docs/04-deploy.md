@@ -107,20 +107,21 @@ az acr login --name $env:ACR_NAME
    - **レジストリ名**: 一意の名前 (例: `acrworkshop12345`)
    - **場所**: `Japan East`
    - **SKU**: `Basic`
+   - その他の項目や、その他のタブの項目はすべて既定値のまま利用
 5. 「確認および作成」→「作成」
 6. 作成後、ACR を開く
-7. 左メニュー「アクセス キー」→「管理者ユーザー」を有効化
+7. 左メニュー「設定」内の「アクセス キー」を選択→表示された「管理者ユーザー」にチェックを追加して有効化
 
 **ポータルで作成した場合の環境変数設定:**
 
 ```bash
 # ポータルで入力したレジストリ名を設定
-export ACR_NAME="acrworkshop12345"  # あなたが入力した名前に置き換え
+export ACR_NAME="あなたが入力したACRの名前"
 ```
 
 **PowerShell の場合:**
 ```powershell
-$env:ACR_NAME = "acrworkshop12345"  # あなたが入力した名前に置き換え
+$env:ACR_NAME = "あなたが入力したACRの名前"
 ```
 
 </details>
@@ -162,22 +163,45 @@ docker push "$env:ACR_NAME.azurecr.io/frontend:v1"
 
 1. Azure Portal で ACR を開く
 2. 「アクセス キー」から以下をコピー:
-   - **ログイン サーバー** (例: `acrworkshop12345.azurecr.io`)
    - **ユーザー名**
    - **パスワード**
 
-3. ローカルターミナルで:
+3. ローカル(VS Codeなどの)ターミナルで:
 
-```bash
-# ACR にログイン (パスワード入力を求められます)
-docker login <ログインサーバー> -u <ユーザー名>
+    - ACR にログイン (パスワード入力を求められます)
 
-# タグ付け (frontend アプリ)
-docker tag frontend:v1 <ログインサーバー>/frontend:v1
+        ```bash
+        docker login $ACR_NAME.azurecr.io -u <ユーザー名>
+        ```
 
-# プッシュ
-docker push <ログインサーバー>/frontend:v1
-```
+        **PowerShell の場合:**
+        ```powershell
+        docker login "$env:ACR_NAME.azurecr.io" -u <ユーザー名>
+        ```
+
+
+    - イメージにタグ付け
+
+        ```bash
+        # タグ付け (frontend アプリ)
+        docker tag frontend:v1 $ACR_NAME.azurecr.io/frontend:v1
+        ```
+
+        **PowerShell の場合:**
+        ```powershell
+        docker tag frontend:v1 "$env:ACR_NAME.azurecr.io/frontend:v1"
+        ```
+
+    - プッシュ
+
+        ```bash
+        docker push $ACR_NAME.azurecr.io/frontend:v1
+        ```
+
+        **PowerShell の場合:**
+        ```powershell
+        docker push "$env:ACR_NAME.azurecr.io/frontend:v1"
+        ```
 
 4. Portal の ACR → 「リポジトリ」で `frontend` が表示されることを確認
 
@@ -286,36 +310,32 @@ az containerapp create `
 ### Container App を作成（Environment も自動作成される）
 
 1. [Azure Portal](https://portal.azure.com/) で「リソースの作成」
-2. 「Container Apps」を検索して選択
+2. 「コンテナーアプリ」を検索して選択
 3. 「作成」をクリック
 4. 基本設定:
    - **リソース グループ**: セクション 1 で設定した名前
    - **コンテナー アプリ名**: `frontend`
    - **リージョン**: `Japan East`
-5. **Container Apps Environment**:
-   - 「新規作成」を選択
-   - **環境名**: Azure が自動生成する名前をそのまま使用（例: `managedEnvironment-xxxxx`）
-   - 「作成」をクリック
+5. **Container Apps 環境**:
+   - `(新規)`と表示されていることを確認（自動で新規作成されます）
+   - Azure が自動生成する名前をそのまま使用（例: `managedEnvironment-xxxxx`）
 
-6. 「コンテナー」タブ:
+6. 画面下の「次へ: コンテナー」をクリックして「コンテナー」タブへ:
    - **イメージのソース**: `Azure Container Registry`
+   - **サブスクリプション**: ご利用中のサブスクリプシ名を選択
    - **レジストリ**: 作成した ACR を選択
    - **イメージ**: `frontend`
    - **イメージ タグ**: `v1`
-   - ✅ 「管理者の資格情報を使用する」にチェック
+   - **レジストリ認証**: 「シークレット」を選択
 
 7. 「イングレス」タブ:
-   - ✅ 「イングレスを有効にする」にチェック
-   - **イングレス トラフィック**: `任意の場所からのトラフィックを受け入れる`
+   - ✅ 「イングレス」のチェックボックスにチェック
+   - **イングレス トラフィック**: `どこからでもトラフィックを受け入れます`
    - **ターゲット ポート**: `8080`
 
-8. 「スケール」タブ:
-   - **最小レプリカ数**: `1`
-   - **最大レプリカ数**: `3`
+8. 画面下部の「確認および作成」をクリック→「作成」
 
-9. 「確認および作成」→「作成」
-
-### 作成された Environment 名を環境変数に設定
+### [option] 作成された Environment 名を環境変数に設定
 
 Container App の作成が完了したら、自動生成された Environment 名を確認して環境変数に設定します。
 
@@ -340,8 +360,9 @@ $env:ACA_ENV = "managedEnvironment-xxxxx"  # あなたの環境名に置き換�
 ---
 
 ## アプリにアクセス
+Azure ポータルの Azure Container Apps の概要ページ右にアプリの URL リンクが表示されますので、クリックして接続できます。
 
-### URL を取得
+### コマンドで URL を取得
 
 ```bash
 export APP_URL=$(az containerapp show \
@@ -362,7 +383,7 @@ $env:APP_URL = (az containerapp show `
 Write-Host "アプリの URL: https://$env:APP_URL"
 ```
 
-### ブラウザで確認
+ブラウザで確認
 
 ブラウザで `https://<表示された URL>` を開いてみましょう。
 
@@ -371,6 +392,8 @@ Write-Host "アプリの URL: https://$env:APP_URL"
 ---
 
 ## ログを確認
+ポータルの左メニュー`ログ ストリーム`からコンテナーのログを確認できます。</BR>
+コマンドで確認する方法は下記のとおりです。
 
 ```bash
 az containerapp logs show \
