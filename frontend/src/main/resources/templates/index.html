@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>商品管理アプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #0078d4;
+        }
+        .message {
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #0078d4;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>商品管理アプリ</h1>
+    <div class="message">
+        <p th:text="${message}">メッセージ</p>
+    </div>
+    
+    <div th:if="${products != null}">
+        <h2>商品一覧</h2>
+        <p>※ Backend API (内部サービス) から取得</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>商品名</th>
+                    <th>価格</th>
+                    <th>在庫</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product : ${products}">
+                    <td th:text="${product.id}">1</td>
+                    <td th:text="${product.name}">商品名</td>
+                    <td th:text="${product.price} + '円'">価格</td>
+                    <td th:text="${product.stock}">在庫</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
