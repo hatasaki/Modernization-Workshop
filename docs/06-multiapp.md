@@ -63,7 +63,7 @@ https://start.spring.io/ で以下を設定:
   - H2 Database
   - Lombok
 
-![Spring Initializr](../images/Spring-backendapi.png)
+![Spring Initializr](../images/spring-backendapi.png)
 
 ダウンロードした`backend-api.zip`ファイルを`~/workshop`にコピーして展開:
 

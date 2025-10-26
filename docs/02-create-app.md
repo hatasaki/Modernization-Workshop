@@ -44,7 +44,7 @@ cd ~/workshop
 
 「GENERATE」をクリックして、`frontend.zip` をダウンロードして作業フォルダ(workshop)に保存
 
-![Spring Initializr](../images/SpringInitializr.png)
+![Spring Initializr](../images/springInitializr.png)
 
 ### 展開
 
