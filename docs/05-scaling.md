@@ -20,7 +20,47 @@
 
 ---
 
-## HTTP スケーリングを設定
+## 0 へのスケールダウン (デフォルトで構成済み)
+
+アクセスがない時はコンテナーを 0 にしてコスト削減できます
+デフォルトで 0 スケールが有効になっています。
+
+<details>
+<summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
+
+```bash
+az containerapp update \
+  --name frontend \
+  --resource-group $RESOURCE_GROUP \
+  --min-replicas 0
+```
+
+**PowerShell の場合:**
+```powershell
+az containerapp update `
+  --name frontend `
+  --resource-group $env:RESOURCE_GROUP `
+  --min-replicas 0
+```
+
+</details>
+
+<details>
+<summary>🌐 <b>方法 B: Azure Portal (ブラウザ)</b></summary>
+
+1. [Azure Portal](https://portal.azure.com/) で Container App `frontend` を開く
+2. メニューの「スケーリング」を選択
+3. スケールルールの **最小レプリカ数** を `0` に変更
+4. 「新しいリビジョンとして保存」をクリック
+
+</details>
+
+> 💡 **VM では不可能なコスト削減**: VM は常時起動が必要ですが、Container Apps はアクセスがない時間は完全に停止してコスト抑えることがにできます</BR>
+ただし、ゼロからのスケール時はコンテナー起動待ちが発生します
+
+---
+
+## [Option] HTTP スケーリングを設定
 
 <details>
 <summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
@@ -61,64 +101,22 @@ az containerapp update `
 <summary>🌐 <b>方法 B: Azure Portal (ブラウザ)</b></summary>
 
 1. [Azure Portal](https://portal.azure.com/) で Container App `frontend` を開く
-2. 左メニュー「スケールとレプリカ」をクリック
-3. 「編集とデプロイ」→「リビジョンの新規作成」
-4. 「スケール」タブ:
-   - **最小レプリカ数**: `1`
-   - **最大レプリカ数**: `10`
-5. 「スケール ルールの追加」:
-   - **ルール名**: `http-rule`
-   - **タイプ**: `HTTP スケーリング`
-   - **同時要求数**: `50`
-6. 「作成」をクリック
+2. メニューの「スケーリング」を選択
+3. スケールルールの **最大レプリカ数**と**最小レプリカ数** をそれぞれ  `10` と `1` に変更
+4. 「スケール ルール」の `http-scaler`クリック
+   - **同時要求**: `50`に変更
+5. 「スケールルールの追加」をクリック
+6. 「新しいリビジョンとして保存」をクリック
 
 </details>
-
----
-
-## 0 へのスケールダウン (オプション)
-
-アクセスがない時はコンテナーを 0 にしてコスト削減:
-
-<details>
-<summary>📘 <b>方法 A: Azure CLI (コマンド)</b></summary>
-
-```bash
-az containerapp update \
-  --name frontend \
-  --resource-group $RESOURCE_GROUP \
-  --min-replicas 0
-```
-
-**PowerShell の場合:**
-```powershell
-az containerapp update `
-  --name frontend `
-  --resource-group $env:RESOURCE_GROUP `
-  --min-replicas 0
-```
-
-</details>
-
-<details>
-<summary>🌐 <b>方法 B: Azure Portal (ブラウザ)</b></summary>
-
-1. Container App を開く
-2. 「スケールとレプリカ」→「編集とデプロイ」
-3. 「スケール」タブで **最小レプリカ数** を `0` に変更
-4. 「作成」
-
-</details>
-
-**注意:** 次のアクセス時に数秒の起動時間がかかります。
-
-> 💡 **VM では不可能なコスト削減**: VM は常時起動が必要ですが、Container Apps はアクセスがない時間は完全に停止してコストゼロに!
 
 ---
 
 ## 動作確認
 
 ### レプリカ数を確認
+ポータルの Azure Container Apss のメニュー「リビジョンとレプリカ」を選択し、「実行の状態」欄で確認できます。</BR>
+コマンドは下記です。
 
 ```bash
 az containerapp replica list \
@@ -135,7 +133,7 @@ az containerapp replica list `
   --output table
 ```
 
-### 負荷をかけて確認 (オプション)
+###  [Option] 負荷をかけて確認
 
 ```bash
 # 100 リクエストを送る
@@ -172,4 +170,4 @@ az containerapp replica list `
 
 ✅ 自動スケーリングが設定できました!
 
-👉 次は [6. ストレージ追加](./06-storage.md) へ
+👉 次は [6. 複数アプリ連携](./06-multiapp.md) へ

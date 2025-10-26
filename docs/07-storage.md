@@ -1,6 +1,8 @@
-# 6. ストレージ追加
+# 7. ストレージ連携（オプション）
 
 ファイルを保存できるようにします。
+
+> 💡 **このセクションはオプションです。** セクション6（複数アプリ連携）まで完了していれば、基本的なモダナイゼーションの流れは体験できています。ストレージ連携について学びたい場合に進めてください。
 
 ---
 
@@ -244,22 +246,22 @@ public class HomeController {
 ```bash
 cd ~/workshop/frontend
 
-# イメージをビルド (v2 としてタグ付け)
-docker build -t $ACR_NAME.azurecr.io/frontend:v2 .
+# イメージをビルド (v3 としてタグ付け)
+docker build -t $ACR_NAME.azurecr.io/frontend:v3 .
 
 # ACR にプッシュ
-docker push $ACR_NAME.azurecr.io/frontend:v2
+docker push $ACR_NAME.azurecr.io/frontend:v3
 ```
 
 **PowerShell の場合:**
 ```powershell
 cd ~/workshop/frontend
 
-# イメージをビルド (v2 としてタグ付け)
-docker build -t "$env:ACR_NAME.azurecr.io/frontend:v2" .
+# イメージをビルド (v3 としてタグ付け)
+docker build -t "$env:ACR_NAME.azurecr.io/frontend:v3" .
 
 # ACR にプッシュ
-docker push "$env:ACR_NAME.azurecr.io/frontend:v2"
+docker push "$env:ACR_NAME.azurecr.io/frontend:v3"
 ```
 
 </details>
@@ -270,8 +272,8 @@ docker push "$env:ACR_NAME.azurecr.io/frontend:v2"
 ```bash
 cd ~/workshop/frontend
 # ローカルでビルド & プッシュ
-docker build -t <your-acr-name>.azurecr.io/frontend:v2 .
-docker push <your-acr-name>.azurecr.io/frontend:v2
+docker build -t <your-acr-name>.azurecr.io/frontend:v3 .
+docker push <your-acr-name>.azurecr.io/frontend:v3
 ```
 
 **注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
@@ -290,7 +292,7 @@ properties:
   template:
     containers:
       - name: frontend
-        image: <your-acr-name>.azurecr.io/frontend:v2
+        image: <your-acr-name>.azurecr.io/frontend:v3
         volumeMounts:
           - volumeName: storage
             mountPath: /data
@@ -328,7 +330,7 @@ az containerapp update `
 2. 「リビジョン管理」→「新しいリビジョンの作成」
 3. 「コンテナー」セクションで既存のコンテナーを選択して編集
 4. **イメージとタグ**:
-   - **イメージ タグ** を `v2` に変更
+   - **イメージ タグ** を `v3` に変更
 5. 「ボリューム マウント」タブ:
    - 「+ 追加」をクリック
    - **ボリュームの種類**: `Azure Files`
@@ -367,4 +369,17 @@ curl "https://$APP_URL/read"
 
 ✅ ストレージがマウントできました!
 
-👉 次は [7. 複数アプリ連携](./07-multiapp.md) へ
+🎉 **オプションセクションを完了しました！**
+
+データ永続化の基本を学ぶことができました。Azure Files を使用することで、コンテナーが再起動してもデータが失われないようにできます。
+
+---
+
+## 次のステップ
+
+さらに学びたい方は:
+- [Azure Container Apps ドキュメント](https://learn.microsoft.com/azure/container-apps/)
+- [Dapr でマイクロサービス](https://docs.dapr.io/)
+- [KEDA でイベント駆動](https://keda.sh/)
+
+お疲れ様でした! 🚀

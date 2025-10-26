@@ -1,4 +1,4 @@
-# 7. 複数アプリ連携
+# 6. 複数アプリ連携
 
 複数のアプリを連携させます。
 
@@ -462,13 +462,13 @@ VS Code で `src/main/resources/templates/index.html` を開き、以下のコ�
 
 ```bash
 cd ~/workshop/frontend
-docker build -t frontend:v3 .
+docker build -t frontend:v2 .
 ```
 
 **PowerShell の場合:**
 ```powershell
 cd ~/workshop/frontend
-docker build -t frontend:v3 .
+docker build -t frontend:v2 .
 ```
 
 ### Dockerネットワークを作成
@@ -506,12 +506,12 @@ docker run -d --name backend-api --network workshop-network -p 8081:8081 backend
 環境変数 `BACKEND_HOST` を設定して、Backend API のコンテナー名を指定します:
 
 ```bash
-docker run -d --name frontend --network workshop-network -p 8080:8080 -e BACKEND_HOST=backend-api frontend:v3
+docker run -d --name frontend --network workshop-network -p 8080:8080 -e BACKEND_HOST=backend-api frontend:v2
 ```
 
 **PowerShell の場合:**
 ```powershell
-docker run -d --name frontend --network workshop-network -p 8080:8080 -e BACKEND_HOST=backend-api frontend:v3
+docker run -d --name frontend --network workshop-network -p 8080:8080 -e BACKEND_HOST=backend-api frontend:v2
 ```
 
 **ポイント:**
@@ -677,16 +677,16 @@ az containerapp create `
 ```bash
 # frontend ディレクトリで実行
 cd ~/workshop/frontend
-docker build -t $ACR_NAME.azurecr.io/frontend:v3 .
-docker push $ACR_NAME.azurecr.io/frontend:v3
+docker build -t $ACR_NAME.azurecr.io/frontend:v2 .
+docker push $ACR_NAME.azurecr.io/frontend:v2
 ```
 
 **PowerShell の場合:**
 ```powershell
 # frontend ディレクトリで実行
 cd ~/workshop/frontend
-docker build -t "$env:ACR_NAME.azurecr.io/frontend:v3" .
-docker push "$env:ACR_NAME.azurecr.io/frontend:v3"
+docker build -t "$env:ACR_NAME.azurecr.io/frontend:v2" .
+docker push "$env:ACR_NAME.azurecr.io/frontend:v2"
 ```
 
 </details>
@@ -697,8 +697,8 @@ docker push "$env:ACR_NAME.azurecr.io/frontend:v3"
 ```bash
 cd ~/workshop/frontend
 # ローカルでビルド & プッシュ
-docker build -t <your-acr-name>.azurecr.io/frontend:v3 .
-docker push <your-acr-name>.azurecr.io/frontend:v3
+docker build -t <your-acr-name>.azurecr.io/frontend:v2 .
+docker push <your-acr-name>.azurecr.io/frontend:v2
 ```
 
 **注意:** `<your-acr-name>` を実際の ACR 名に置き換えてください（例: `acrworkshop12345`）。
@@ -716,7 +716,7 @@ docker push <your-acr-name>.azurecr.io/frontend:v3
 az containerapp update \
   --name frontend \
   --resource-group $RESOURCE_GROUP \
-  --image $ACR_NAME.azurecr.io/frontend:v3
+  --image $ACR_NAME.azurecr.io/frontend:v2
 ```
 
 **PowerShell の場合:**
@@ -724,7 +724,7 @@ az containerapp update \
 az containerapp update `
   --name frontend `
   --resource-group $env:RESOURCE_GROUP `
-  --image "$env:ACR_NAME.azurecr.io/frontend:v3"
+  --image "$env:ACR_NAME.azurecr.io/frontend:v2"
 ```
 
 > 💡 **新規作成ではなく、既存のアプリを更新 (update) します！**
@@ -739,7 +739,7 @@ az containerapp update `
 1. [Azure Portal](https://portal.azure.com/) で既存の Container App `frontend` を開く
 2. 「リビジョン管理」→「新しいリビジョンの作成」
 3. 「コンテナー」セクションで既存のコンテナーを選択して編集
-4. **イメージ タグ** を `v3` に変更
+4. **イメージ タグ** を `v2` に変更
 5. 「作成」をクリック
 
 > 💡 **自動的に新しいバージョンにデプロイされます！ゼロダウンタイム！**
@@ -791,7 +791,7 @@ Write-Host "Frontend URL: https://$env:FRONTEND_URL"
     ↓
 Frontend (外部公開) ← セクション 2 で作成したアプリを改良
     ↓
-Backend API (内部のみ) ← セクション 7 で新規作成
+Backend API (内部のみ) ← セクション 6 で新規作成
 ```
 
 > 💡 **Frontend は外部からアクセス可能、Backend API は内部のみ！セキュアな構成です！**
@@ -802,7 +802,9 @@ Backend API (内部のみ) ← セクション 7 で新規作成
 
 ✅ 複数のアプリが連携しました!
 
-🎉 **ワークショップ完了です!**
+🎉 **基本的なワークショップが完了です!**
+
+> 💡 **さらに学びたい方へ:** [セクション 7 (ストレージ連携)](./07-storage.md) でデータ永続化について学べます（オプション）。
 
 ---
 
@@ -822,6 +824,12 @@ az group delete --name $env:RESOURCE_GROUP --yes
 ---
 
 ## 次のステップ
+
+### オプション: さらに学びたい方へ
+
+👉 [セクション 7: ストレージ連携（オプション）](./07-storage.md) でデータ永続化について学べます
+
+### Azure のさらなる学習
 
 さらに学びたい方は:
 - [Azure Container Apps ドキュメント](https://learn.microsoft.com/azure/container-apps/)
