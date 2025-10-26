@@ -249,6 +249,28 @@ Invoke-WebRequest http://localhost:8081/api/products
 
 > 💡 **まずはローカルでバックエンドAPIが正しく動作することを確認しました！**
 
+### イメージにタグ付け
+
+```bash
+# タグ付け (frontend アプリ)
+docker tag backend-api:v1 $ACR_NAME.azurecr.io/backend-api:v1
+```
+
+**PowerShell の場合:**
+```powershell
+docker tag backend-api:v1 "$env:ACR_NAME.azurecr.io/backend-api:v1"
+```
+
+### プッシュ
+
+```bash
+docker push $ACR_NAME.azurecr.io/backend-api:v1
+```
+
+**PowerShell の場合:**
+```powershell
+docker push "$env:ACR_NAME.azurecr.io/backend-api:v1"
+```
 ---
 
 <details>
@@ -307,18 +329,24 @@ az containerapp create `
 <details>
 <summary>🌐 <b>方法 B: Azure Portal (ブラウザ)</b></summary>
 
-1. [Azure Portal](https://portal.azure.com/) で「Container Apps」を作成
+1. [Azure Portal](https://portal.azure.com/) で「コンテナーアプリ」を作成
 2. 基本設定:
-   - **名前**: `backend-api`
    - **リソース グループ**: セクション 1 で設定した名前
-   - **Container Apps Environment**: セクション 4 で作成した環境を選択
+   - **コンテナーアプリ名前**: `backend-api`
+   - **リージョン**: `Japan East`
+   - **Container Apps 環境**: セクション 4 で作成された既存の環境を選択
 
-3. コンテナー設定:
-   - **イメージ**: ACR から `backend-api:v1` を選択
+3. 画面下の「次へ: コンテナー」をクリックして「コンテナー」タブへ:
+   - **イメージのソース**: `Azure Container Registry`
+   - **サブスクリプション**: ご利用中のサブスクリプシ名を選択
+   - **レジストリ**: セクション４で作成した ACR を選択
+   - **イメージ**: `backend-api`
+   - **イメージ タグ**: `v1`
+   - **レジストリ認証**: 「シークレット」を選択
 
-4. **イングレス設定 (重要)**:
+4. **イングレス設定**:
    - ✅ 「イングレスを有効にする」
-   - **イングレス トラフィック**: `Container Apps Environment 内に限定` ← **内部のみ**
+   - **イングレス トラフィック**: `Container Apps 環境に限定` ← **内部のみ**
    - **ターゲット ポート**: `8081`
 
 5. 「確認および作成」→「作成」
